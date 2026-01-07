@@ -13,7 +13,12 @@ let isTransitioning = false;
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     await loadContent();
-    displayRandomContent();
+
+    // Display initial content and add to history
+    if (contentPool.length > 0) {
+        const randomIndex = Math.floor(Math.random() * contentPool.length);
+        displayContentAtIndex(randomIndex, true); // Add initial content to history
+    }
 
     // Set random flower icon
     const flowerNum = Math.floor(Math.random() * 4) + 1;
@@ -264,7 +269,17 @@ function shuffleContent() {
     container.classList.add('fade-out');
 
     setTimeout(() => {
-        displayRandomContent();
+        // Get random index (avoid repeating current)
+        let randomIndex;
+        if (contentPool.length === 1) {
+            randomIndex = 0;
+        } else {
+            do {
+                randomIndex = Math.floor(Math.random() * contentPool.length);
+            } while (randomIndex === currentIndex && contentPool.length > 1);
+        }
+
+        displayContentAtIndex(randomIndex, true); // Add to history
         container.classList.remove('fade-out');
         container.classList.add('fade-in');
         isTransitioning = false;
