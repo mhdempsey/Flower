@@ -384,6 +384,40 @@ function renderContent(item) {
     }
 
     container.innerHTML = html;
+
+    // Attach lightbox listeners to gallery images
+    attachLightboxListeners();
+}
+
+// Attach lightbox event listeners to gallery images
+function attachLightboxListeners() {
+    const galleryImages = document.querySelectorAll('.gallery-image');
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.querySelector('.lightbox-close');
+
+    if (!lightbox || !lightboxImg) return;
+
+    // Add click listeners to all gallery images
+    galleryImages.forEach(img => {
+        img.addEventListener('click', (e) => {
+            e.stopPropagation(); // Prevent triggering shuffle
+            lightboxImg.src = img.src;
+            lightbox.classList.add('active');
+        });
+    });
+
+    // Close lightbox when clicking on it or close button
+    lightbox.addEventListener('click', () => {
+        lightbox.classList.remove('active');
+    });
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            lightbox.classList.remove('active');
+        });
+    }
 }
 
 // Toggle editor's note expand/collapse
