@@ -4,6 +4,8 @@
 let contentPool = [];
 let currentContent = null;
 let currentIndex = 0;
+let viewHistory = []; // Track viewing history
+let historyPosition = -1; // Current position in history
 let isTransitioning = false;
 
 // Initialize on page load
@@ -11,11 +13,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadContent();
     displayRandomContent();
 
-    // Spacebar to shuffle
+    // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
             e.preventDefault();
             shuffleContent();
+        } else if (e.code === 'ArrowLeft') {
+            e.preventDefault();
+            navigateBack();
+        } else if (e.code === 'ArrowRight') {
+            e.preventDefault();
+            navigateForward();
         }
     });
 
@@ -69,29 +77,58 @@ function displayRandomContent() {
 }
 
 // Display content at specific index
-function displayContentAtIndex(index) {
+function displayContentAtIndex(index, addToHistory = false) {
     if (contentPool.length === 0 || index < 0 || index >= contentPool.length) return;
 
     currentIndex = index;
     currentContent = contentPool[index];
+
+    // Add to history if requested (e.g., from shuffle or sidebar)
+    if (addToHistory) {
+        // Clear forward history if we're in the middle of history
+        if (historyPosition < viewHistory.length - 1) {
+            viewHistory = viewHistory.slice(0, historyPosition + 1);
+        }
+        viewHistory.push(index);
+        historyPosition = viewHistory.length - 1;
+    }
+
     renderContent(currentContent);
     updateSidebar();
 }
 
-// Navigate to next content
-function navigateNext() {
-    const nextIndex = (currentIndex + 1) % contentPool.length;
-    transitionToContent(nextIndex);
+// Navigate back in history
+function navigateBack() {
+    if (historyPosition > 0) {
+        historyPosition--;
+        const index = viewHistory[historyPosition];
+        transitionToContent(index, false); // Don't add to history
+    }
 }
 
-// Navigate to previous content
+// Navigate forward in history
+function navigateForward() {
+    if (historyPosition < viewHistory.length - 1) {
+        historyPosition++;
+        const index = viewHistory[historyPosition];
+        transitionToContent(index, false); // Don't add to history
+    }
+}
+
+// Navigate to next content in list
+function navigateNext() {
+    const nextIndex = (currentIndex + 1) % contentPool.length;
+    transitionToContent(nextIndex, true); // Add to history
+}
+
+// Navigate to previous content in list
 function navigatePrevious() {
     const prevIndex = (currentIndex - 1 + contentPool.length) % contentPool.length;
-    transitionToContent(prevIndex);
+    transitionToContent(prevIndex, true); // Add to history
 }
 
 // Transition to content with fade
-function transitionToContent(index) {
+function transitionToContent(index, addToHistory = true) {
     if (isTransitioning || contentPool.length === 0) return;
 
     isTransitioning = true;
@@ -102,7 +139,7 @@ function transitionToContent(index) {
     container.classList.add('fade-out');
 
     setTimeout(() => {
-        displayContentAtIndex(index);
+        displayContentAtIndex(index, addToHistory);
         container.classList.remove('fade-out');
         container.classList.add('fade-in');
         isTransitioning = false;
@@ -191,6 +228,12 @@ function renderContent(item) {
         case 'image_text':
             html += renderImageText(item);
             break;
+        case 'image_gallery':
+            html += renderImageGallery(item);
+            break;
+        case 'quote_gallery':
+            html += renderQuoteGallery(item);
+            break;
         case 'video':
             html += renderVideo(item);
             break;
@@ -276,6 +319,32 @@ function renderLink(item) {
         <div class="link-title">${escapeHtml(item.title || 'Link')}</div>
         ${item.attribution ? `<div class="link-description">${escapeHtml(item.attribution)}</div>` : ''}
     </a>`;
+}
+
+function renderImageGallery(item) {
+    // Content field contains image URLs separated by newlines
+    const imageUrls = item.content.split('\n').filter(url => url.trim());
+
+    let html = '<div class="image-gallery">';
+    imageUrls.forEach(url => {
+        html += `<img src="${escapeHtml(url.trim())}" alt="Gallery image" class="gallery-image">`;
+    });
+    html += '</div>';
+
+    return html;
+}
+
+function renderQuoteGallery(item) {
+    // Content field contains quotes separated by "---" or "|"
+    const quotes = item.content.split(/---|\|/).filter(q => q.trim());
+
+    let html = '<div class="quote-gallery">';
+    quotes.forEach(quote => {
+        html += `<blockquote class="gallery-quote">${escapeHtml(quote.trim())}</blockquote>`;
+    });
+    html += '</div>';
+
+    return html;
 }
 
 // Helper functions

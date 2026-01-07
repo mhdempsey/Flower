@@ -162,3 +162,67 @@
 .editor-note-content.expanded {
     display: block;
 }
+
+/* Image Gallery */
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.gallery-image {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-radius: 2px;
+    transition: transform 0.2s;
+}
+
+.gallery-image:hover {
+    transform: scale(1.02);
+}
+
+/* Quote Gallery */
+.quote-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.gallery-quote {
+    font-family: 'Adobe Caslon Pro', Georgia, serif;
+    font-size: 1.25rem;
+    line-height: 1.6;
+    font-weight: 300;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    border-left: 3px solid #1e3a8a;
+    border-radius: 2px;
+    text-align: left;
+}
+
+/* Responsive gallery adjustments */
+@media (max-width: 768px) {
+    .image-gallery {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .gallery-image {
+        height: 200px;
+    }
+
+    .quote-gallery {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .gallery-quote {
+        font-size: 1.1rem;
+        padding: 1.25rem;
+    }
+}

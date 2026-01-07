@@ -1,15 +1,13 @@
 // Florilege Chrome Extension - New Tab Script
 // Displays random content from cached Notion database
-// Florilege Chrome Extension - New Tab Script
-// Displays random content from cached Notion database
 
 let contentPool = [];
 let currentContent = null;
 let currentIndex = 0;
-let viewHistory = []; // Track viewing history
-let historyPosition = -1; // Current position in history
 let isTransitioning = false;
 
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', async () => {
 // Initialize on page load
 document.addEventListener('DOMContentLoaded', async () => {
     await loadContent();
@@ -42,120 +40,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
 });
 
-// Load content from Chrome storage
+// Load content from API
 async function loadContent() {
     try {
-        // Get settings first
-        const settings = await chrome.storage.sync.get(['notionApiKey', 'notionDatabaseId']);
-
-        if (!settings.notionApiKey || !settings.notionDatabaseId) {
-            showError('Please configure your Notion credentials in Settings.');
-            return;
+        const response = await fetch('/api/content');
+        if (!response.ok) {
+            throw new Error('Failed to fetch content');
         }
-
-        // Try to load from cache first
-        const cached = await chrome.storage.local.get(['contentCache', 'cacheTimestamp']);
-
-        // Use cache if it's less than 1 hour old
-        const cacheAge = Date.now() - (cached.cacheTimestamp || 0);
-        const oneHour = 60 * 60 * 1000;
-
-        if (cached.contentCache && cacheAge < oneHour) {
-            contentPool = cached.contentCache;
-            console.log('Loaded content from cache');
-        } else {
-            // Fetch fresh content from Notion
-            await fetchFromNotion(settings.notionApiKey, settings.notionDatabaseId);
-        }
+        const data = await response.json();
+        contentPool = data.content || [];
 
         if (contentPool.length === 0) {
-            showError('No active content found. Please add content to your Notion database.');
+            showError('No content available. Please add content to your Notion database.');
         }
-
     } catch (error) {
         console.error('Error loading content:', error);
-        showError('Unable to load content. Check Settings and try again.');
+        showError('Unable to load content. Please check your configuration.');
     }
-}
-
-// Fetch content from Notion API
-async function fetchFromNotion(apiKey, databaseId) {
-    try {
-        const response = await fetch('https://api.notion.com/v1/databases/' + databaseId + '/query', {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + apiKey,
-                'Notion-Version': '2022-06-28',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                filter: {
-                    property: 'Active',
-                    checkbox: {
-                        equals: true
-                    }
-                }
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Failed to fetch from Notion: ' + response.status);
-        }
-
-        const data = await response.json();
-
-        // Transform Notion data to our format
-        contentPool = data.results.map(page => {
-            const props = page.properties;
-            return {
-                id: page.id,
-                title: getPlainText(props.Title),
-                type: getSelect(props.Type) || 'text',
-                content: getPlainText(props.Content),
-                imageUrl: getUrl(props.ImageURL),
-                attribution: getPlainText(props.Attribution),
-                learnMoreUrl: getUrl(props.LearnMoreURL),
-                editorNote: getPlainText(props.EditorNote)
-            };
-        });
-
-        // Cache the content
-        await chrome.storage.local.set({
-            contentCache: contentPool,
-            cacheTimestamp: Date.now()
-        });
-
-        console.log('Fetched and cached', contentPool.length, 'items from Notion');
-
-    } catch (error) {
-        console.error('Error fetching from Notion:', error);
-        throw error;
-    }
-}
-
-// Helper functions to extract data from Notion property objects
-function getPlainText(property) {
-    if (!property) return '';
-
-    if (property.type === 'title' && property.title) {
-        return property.title.map(t => t.plain_text).join('');
-    }
-
-    if (property.type === 'rich_text' && property.rich_text) {
-        return property.rich_text.map(t => t.plain_text).join('');
-    }
-
-    return '';
-}
-
-function getSelect(property) {
-    if (!property || property.type !== 'select') return '';
-    return property.select ? property.select.name : '';
-}
-
-function getUrl(property) {
-    if (!property || property.type !== 'url') return '';
-    return property.url || '';
 }
 
 // Display random content
@@ -292,6 +193,66 @@ function updateSidebar() {
     }
 
     sidebar.innerHTML = html;
+
+    // Fade out
+    container.classList.remove('fade-in');
+    container.classList.add('fade-out');
+
+    setTimeout(() => {
+        displayContentAtIndex(index);
+        container.classList.remove('fade-out');
+        container.classList.add('fade-in');
+        isTransitioning = false;
+    }, 300);
+}
+
+// Shuffle to new content with fade transition
+function shuffleContent() {
+    if (isTransitioning || contentPool.length === 0) return;
+
+    isTransitioning = true;
+    const container = document.getElementById('content-display');
+
+    // Fade out
+    container.classList.remove('fade-in');
+    container.classList.add('fade-out');
+
+    setTimeout(() => {
+        displayRandomContent();
+        container.classList.remove('fade-out');
+        container.classList.add('fade-in');
+        isTransitioning = false;
+    }, 300);
+}
+
+// Update sidebar with prev/current/next navigation
+function updateSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar || contentPool.length === 0) return;
+
+    let html = '';
+
+    // Previous 2 items
+    for (let i = 2; i >= 1; i--) {
+        const index = (currentIndex - i + contentPool.length) % contentPool.length;
+        const item = contentPool[index];
+        const title = item.title || 'Untitled';
+        html += `<div class="sidebar-item prev" onclick="transitionToContent(${index})">${escapeHtml(title)}</div>`;
+    }
+
+    // Current item
+    const currentTitle = currentContent.title || 'Untitled';
+    html += `<div class="sidebar-item current">${escapeHtml(currentTitle)}</div>`;
+
+    // Next 2 items
+    for (let i = 1; i <= 2; i++) {
+        const index = (currentIndex + i) % contentPool.length;
+        const item = contentPool[index];
+        const title = item.title || 'Untitled';
+        html += `<div class="sidebar-item next" onclick="transitionToContent(${index})">${escapeHtml(title)}</div>`;
+    }
+
+    sidebar.innerHTML = html;
 }
 
 // Render content based on type
@@ -326,12 +287,6 @@ function renderContent(item) {
             break;
         case 'image_text':
             html += renderImageText(item);
-            break;
-        case 'image_gallery':
-            html += renderImageGallery(item);
-            break;
-        case 'quote_gallery':
-            html += renderQuoteGallery(item);
             break;
         case 'video':
             html += renderVideo(item);
@@ -401,9 +356,6 @@ function renderAudio(item) {
 }
 
 function renderTweet(item) {
-    // For tweets, we'll embed using Twitter's oEmbed API or just link to it
-    // Simplified version: just show as a link card
-    const tweetId = extractTweetId(item.content);
     return `<div class="content-tweet">
         <blockquote class="content-text">
             <a href="${escapeHtml(item.content)}" target="_blank" rel="noopener noreferrer" style="color: #1a1a1a; text-decoration: none;">
@@ -418,32 +370,6 @@ function renderLink(item) {
         <div class="link-title">${escapeHtml(item.title || 'Link')}</div>
         ${item.attribution ? `<div class="link-description">${escapeHtml(item.attribution)}</div>` : ''}
     </a>`;
-}
-
-function renderImageGallery(item) {
-    // Content field contains image URLs separated by newlines
-    const imageUrls = item.content.split('\n').filter(url => url.trim());
-
-    let html = '<div class="image-gallery">';
-    imageUrls.forEach(url => {
-        html += `<img src="${escapeHtml(url.trim())}" alt="Gallery image" class="gallery-image">`;
-    });
-    html += '</div>';
-
-    return html;
-}
-
-function renderQuoteGallery(item) {
-    // Content field contains quotes separated by "---" or "|"
-    const quotes = item.content.split(/---|\|/).filter(q => q.trim());
-
-    let html = '<div class="quote-gallery">';
-    quotes.forEach(quote => {
-        html += `<blockquote class="gallery-quote">${escapeHtml(quote.trim())}</blockquote>`;
-    });
-    html += '</div>';
-
-    return html;
 }
 
 // Helper functions
@@ -478,11 +404,6 @@ function extractYouTubeId(url) {
     const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
     const match = url.match(regExp);
     return (match && match[7].length === 11) ? match[7] : '';
-}
-
-function extractTweetId(url) {
-    const match = url.match(/status\/(\d+)/);
-    return match ? match[1] : '';
 }
 
 function escapeHtml(text) {
