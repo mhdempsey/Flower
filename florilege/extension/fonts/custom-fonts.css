@@ -59,11 +59,69 @@
     font-size: 1.1rem;
 }
 
-/* Apply VTKS Dear Love to Florilege branding (larger, no glitch) */
+/* Apply Adobe Caslon to Florilege branding */
 .branding {
-    font-family: 'VTKS Dear Love', cursive;
-    letter-spacing: 0.2em;
+    font-family: 'Adobe Caslon Pro', Georgia, serif;
+    letter-spacing: 0.05em;
     font-size: 1.125rem;
+    color: #1e3a8a; /* Deep blue */
+}
+
+.attribution-link {
+    font-family: 'Adobe Caslon Pro', Georgia, serif;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-decoration: none;
+    margin-left: 0.5rem;
+}
+
+.attribution-link:hover {
+    color: #1e3a8a;
+    text-decoration: underline;
+}
+
+/* Sidebar navigation */
+.sidebar {
+    position: fixed;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sidebar-item {
+    font-family: 'Adobe Caslon Pro', Georgia, serif;
+    font-size: 0.75rem;
+    color: #999;
+    text-decoration: none;
+    padding: 0.5rem;
+    border-left: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-item:hover {
+    color: #1a1a1a;
+    border-left-color: #1e3a8a;
+}
+
+.sidebar-item.current {
+    font-weight: 600;
+    color: #1e3a8a;
+    border-left-color: #1e3a8a;
+    font-size: 0.875rem;
+}
+
+.sidebar-item.prev,
+.sidebar-item.next {
+    font-size: 0.7rem;
+    color: #ccc;
 }
 
 /* Editor's Note styling */

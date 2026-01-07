@@ -3,6 +3,7 @@
 
 let contentPool = [];
 let currentContent = null;
+let currentIndex = 0;
 let isTransitioning = false;
 
 // Initialize on page load
@@ -20,10 +21,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Click anywhere to shuffle (optional)
     document.getElementById('content-container').addEventListener('click', (e) => {
-        // Don't shuffle if clicking on a link
-        if (e.target.tagName !== 'A') {
-            shuffleContent();
+        // Don't shuffle if clicking on links, editor's note, or sidebar navigation
+        if (e.target.tagName === 'A' ||
+            e.target.classList.contains('editor-note-toggle') ||
+            e.target.closest('.editor-note') ||
+            e.target.closest('.sidebar')) {
+            return;
         }
+        shuffleContent();
     });
 });
 
@@ -147,18 +152,58 @@ function getUrl(property) {
 function displayRandomContent() {
     if (contentPool.length === 0) return;
 
-    // Get random content (avoid repeating current)
-    let randomContent;
+    // Get random index (avoid repeating current)
+    let randomIndex;
     if (contentPool.length === 1) {
-        randomContent = contentPool[0];
+        randomIndex = 0;
     } else {
         do {
-            randomContent = contentPool[Math.floor(Math.random() * contentPool.length)];
-        } while (randomContent === currentContent && contentPool.length > 1);
+            randomIndex = Math.floor(Math.random() * contentPool.length);
+        } while (randomIndex === currentIndex && contentPool.length > 1);
     }
 
-    currentContent = randomContent;
-    renderContent(randomContent);
+    displayContentAtIndex(randomIndex);
+}
+
+// Display content at specific index
+function displayContentAtIndex(index) {
+    if (contentPool.length === 0 || index < 0 || index >= contentPool.length) return;
+
+    currentIndex = index;
+    currentContent = contentPool[index];
+    renderContent(currentContent);
+    updateSidebar();
+}
+
+// Navigate to next content
+function navigateNext() {
+    const nextIndex = (currentIndex + 1) % contentPool.length;
+    transitionToContent(nextIndex);
+}
+
+// Navigate to previous content
+function navigatePrevious() {
+    const prevIndex = (currentIndex - 1 + contentPool.length) % contentPool.length;
+    transitionToContent(prevIndex);
+}
+
+// Transition to content with fade
+function transitionToContent(index) {
+    if (isTransitioning || contentPool.length === 0) return;
+
+    isTransitioning = true;
+    const container = document.getElementById('content-display');
+
+    // Fade out
+    container.classList.remove('fade-in');
+    container.classList.add('fade-out');
+
+    setTimeout(() => {
+        displayContentAtIndex(index);
+        container.classList.remove('fade-out');
+        container.classList.add('fade-in');
+        isTransitioning = false;
+    }, 300);
 }
 
 // Shuffle to new content with fade transition
@@ -178,6 +223,36 @@ function shuffleContent() {
         container.classList.add('fade-in');
         isTransitioning = false;
     }, 300);
+}
+
+// Update sidebar with prev/current/next navigation
+function updateSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    if (!sidebar || contentPool.length === 0) return;
+
+    let html = '';
+
+    // Previous 2 items
+    for (let i = 2; i >= 1; i--) {
+        const index = (currentIndex - i + contentPool.length) % contentPool.length;
+        const item = contentPool[index];
+        const title = item.title || 'Untitled';
+        html += `<div class="sidebar-item prev" onclick="transitionToContent(${index})">${escapeHtml(title)}</div>`;
+    }
+
+    // Current item
+    const currentTitle = currentContent.title || 'Untitled';
+    html += `<div class="sidebar-item current">${escapeHtml(currentTitle)}</div>`;
+
+    // Next 2 items
+    for (let i = 1; i <= 2; i++) {
+        const index = (currentIndex + i) % contentPool.length;
+        const item = contentPool[index];
+        const title = item.title || 'Untitled';
+        html += `<div class="sidebar-item next" onclick="transitionToContent(${index})">${escapeHtml(title)}</div>`;
+    }
+
+    sidebar.innerHTML = html;
 }
 
 // Render content based on type
