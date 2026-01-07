@@ -58,7 +58,8 @@ module.exports = async (req, res) => {
                 content: getPlainText(props.Content),
                 imageUrl: getUrl(props.ImageURL),
                 attribution: getPlainText(props.Attribution),
-                learnMoreUrl: getUrl(props.LearnMoreURL)
+                learnMoreUrl: getUrl(props.LearnMoreURL),
+                editorNote: getPlainText(props.EditorNote)
             };
         });
 

@@ -90,6 +90,16 @@ function renderContent(item) {
         html += `<div class="content-label">${escapeHtml(item.title)}</div>`;
     }
 
+    // Editor's note (expandable)
+    if (item.editorNote) {
+        html += `
+            <div class="editor-note">
+                <div class="editor-note-toggle" onclick="toggleEditorNote()">editor's note</div>
+                <div class="editor-note-content" id="editor-note-content">${escapeHtml(item.editorNote)}</div>
+            </div>
+        `;
+    }
+
     // Main content based on type
     html += '<div class="content-main">';
 
@@ -132,6 +142,14 @@ function renderContent(item) {
     }
 
     container.innerHTML = html;
+}
+
+// Toggle editor's note expand/collapse
+function toggleEditorNote() {
+    const noteContent = document.getElementById('editor-note-content');
+    if (noteContent) {
+        noteContent.classList.toggle('expanded');
+    }
 }
 
 // Render functions for each content type
