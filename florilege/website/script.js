@@ -13,6 +13,13 @@ document.addEventListener('DOMContentLoaded', async () => {
     await loadContent();
     displayRandomContent();
 
+    // Set random flower icon
+    const flowerNum = Math.floor(Math.random() * 4) + 1;
+    const flowerImg = document.getElementById('randomFlower');
+    if (flowerImg) {
+        flowerImg.src = `/images/flower${flowerNum}.png`;
+    }
+
     // Keyboard navigation
     document.addEventListener('keydown', (e) => {
         if (e.code === 'Space') {
