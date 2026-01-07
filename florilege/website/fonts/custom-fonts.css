@@ -1,49 +1,28 @@
 /* Custom Fonts */
 
-/*
-  To use custom fonts:
-  1. Place your .ttf, .woff, or .woff2 font files in the /fonts folder
-  2. Add @font-face declarations below
-  3. Use the font-family name in your CSS
-*/
-
-/* Example: Antiqua font */
+/* Antiqua font */
 @font-face {
     font-family: 'Antiqua';
     src: url('/fonts/Antiqua.woff2') format('woff2'),
-         url('/fonts/Antiqua.woff') format('woff'),
-         url('/fonts/Antiqua.ttf') format('truetype');
+         url('/fonts/Antiqua.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
 }
 
-/* If you have multiple weights, add them separately */
-@font-face {
-    font-family: 'Antiqua';
-    src: url('/fonts/Antiqua-Bold.woff2') format('woff2'),
-         url('/fonts/Antiqua-Bold.woff') format('woff'),
-         url('/fonts/Antiqua-Bold.ttf') format('truetype');
-    font-weight: bold;
-    font-style: normal;
-    font-display: swap;
-}
-
-/* After adding your fonts above, you can use them in the CSS below */
-
-/* Example: Use Antiqua for learn more links */
+/* Apply Antiqua font to learn more links */
 .content-learn-more a {
     font-family: 'Antiqua', Georgia, serif;
 }
 
-/* Example: Use Antiqua for all content text */
+/* Optional: Use Antiqua for all content text */
 /*
 .content-text {
     font-family: 'Antiqua', Georgia, serif;
 }
 */
 
-/* Example: Use Antiqua for image captions */
+/* Optional: Use Antiqua for image captions */
 /*
 .image-caption {
     font-family: 'Antiqua', Georgia, serif;
