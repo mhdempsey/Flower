@@ -1,0 +1,455 @@
+/*
+ * Florilege Chrome Extension Styles
+ *
+ * A minimal, contemplative design for the new tab page.
+ * Matches the website aesthetic.
+ */
+
+/* ============================================
+   CSS Variables - Easy customization
+   ============================================ */
+:root {
+    /* Colors */
+    --bg-color: #faf9f7;          /* Off-white background */
+    --text-color: #1a1a1a;        /* Near-black text */
+    --text-muted: #666666;        /* Muted text for UI elements */
+    --text-subtle: #999999;       /* Even more subtle */
+    --link-color: #1a1a1a;        /* Links match text */
+    --link-hover: #444444;        /* Slightly lighter on hover */
+    --border-color: #e5e5e5;      /* Light border */
+
+    /* Typography */
+    --font-serif: 'Newsreader', Georgia, 'Times New Roman', serif;
+    --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+    /* Spacing */
+    --content-max-width: 800px;
+    --content-padding: 2rem;
+
+    /* Transitions */
+    --fade-duration: 0.4s;
+}
+
+/* ============================================
+   Base Styles
+   ============================================ */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+}
+
+body {
+    font-family: var(--font-sans);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    min-height: 100vh;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    cursor: pointer;
+}
+
+/* ============================================
+   Setup Prompt (shown when not configured)
+   ============================================ */
+.setup-prompt {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--bg-color);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+}
+
+.setup-prompt.visible {
+    display: flex;
+}
+
+.setup-content {
+    text-align: center;
+    max-width: 400px;
+    padding: 2rem;
+}
+
+.setup-content h1 {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    font-weight: 400;
+    margin-bottom: 1rem;
+}
+
+.setup-content p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.setup-button {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--text-color);
+    color: var(--bg-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.setup-button:hover {
+    background: var(--link-hover);
+}
+
+/* ============================================
+   Main Container - Centers content
+   ============================================ */
+.oracle-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: var(--content-padding);
+}
+
+/* ============================================
+   Content Area
+   ============================================ */
+.oracle-content {
+    max-width: var(--content-max-width);
+    width: 100%;
+    text-align: center;
+    opacity: 1;
+    transition: opacity var(--fade-duration) ease-in-out;
+}
+
+.oracle-content.fade-out {
+    opacity: 0;
+}
+
+/* ============================================
+   Loading State
+   ============================================ */
+.loading {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    color: var(--text-muted);
+    letter-spacing: 0.2em;
+}
+
+.loading.hidden {
+    display: none;
+}
+
+/* ============================================
+   Content Label/Title (above main content)
+   ============================================ */
+.content-label {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--text-muted);
+    margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   Text Content - Blockquote Style
+   ============================================ */
+.content-text {
+    font-family: var(--font-serif);
+    font-size: 1.75rem;
+    line-height: 1.5;
+    font-weight: 400;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.content-text em {
+    font-style: italic;
+}
+
+.content-text.short {
+    font-size: 2.25rem;
+    line-height: 1.4;
+}
+
+/* ============================================
+   Image Content
+   ============================================ */
+.content-image {
+    max-width: 100%;
+    max-height: 70vh;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    border-radius: 2px;
+}
+
+.content-image-wrapper {
+    margin-bottom: 1.5rem;
+}
+
+.content-caption {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* ============================================
+   Video Embed (YouTube/Vimeo)
+   ============================================ */
+.content-video-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    margin: 0 auto;
+    padding-bottom: 56.25%;
+    height: 0;
+    overflow: hidden;
+    border-radius: 4px;
+}
+
+.content-video-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* ============================================
+   Audio Embed (Spotify)
+   ============================================ */
+.content-audio-wrapper {
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.content-audio-wrapper iframe {
+    border-radius: 12px;
+    border: none;
+    width: 100%;
+}
+
+/* ============================================
+   Tweet Embed
+   ============================================ */
+.content-tweet-wrapper {
+    display: flex;
+    justify-content: center;
+}
+
+.content-tweet-wrapper .twitter-tweet {
+    margin: 0 !important;
+}
+
+/* ============================================
+   Link Card
+   ============================================ */
+.content-link-card {
+    display: block;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 1.5rem 2rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    text-decoration: none;
+    color: var(--text-color);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.content-link-card:hover {
+    border-color: #ccc;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.content-link-card .link-title {
+    font-family: var(--font-serif);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.content-link-card .link-description {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+}
+
+.content-link-card .link-url {
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    margin-top: 0.75rem;
+}
+
+/* ============================================
+   Attribution & Learn More
+   ============================================ */
+.content-attribution {
+    font-family: var(--font-sans);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 2rem;
+}
+
+.content-learn-more {
+    display: inline-block;
+    font-family: var(--font-sans);
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    text-decoration: none;
+    margin-top: 0.75rem;
+    transition: color 0.2s ease;
+}
+
+.content-learn-more:hover {
+    color: var(--text-muted);
+}
+
+/* ============================================
+   Footer Branding
+   ============================================ */
+.branding {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    color: var(--text-subtle);
+    letter-spacing: 0.1em;
+    text-transform: lowercase;
+}
+
+/* ============================================
+   Interaction Hint
+   ============================================ */
+.hint {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    font-family: var(--font-sans);
+    font-size: 0.65rem;
+    color: var(--text-subtle);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.hint.visible {
+    opacity: 1;
+}
+
+/* ============================================
+   Settings Link
+   ============================================ */
+.settings-link {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    font-size: 1rem;
+    color: var(--text-subtle);
+    text-decoration: none;
+    opacity: 0.5;
+    transition: opacity 0.2s ease;
+}
+
+.settings-link:hover {
+    opacity: 1;
+}
+
+/* ============================================
+   Responsive Design
+   ============================================ */
+@media (max-width: 768px) {
+    :root {
+        --content-padding: 1.5rem;
+    }
+
+    .content-text {
+        font-size: 1.4rem;
+    }
+
+    .content-text.short {
+        font-size: 1.75rem;
+    }
+
+    .content-caption {
+        font-size: 1.1rem;
+    }
+
+    .branding,
+    .hint {
+        font-size: 0.6rem;
+    }
+}
+
+@media (max-width: 480px) {
+    :root {
+        --content-padding: 1rem;
+    }
+
+    .content-text {
+        font-size: 1.2rem;
+    }
+
+    .content-text.short {
+        font-size: 1.4rem;
+    }
+
+    .content-label {
+        font-size: 0.65rem;
+    }
+}
+
+/* ============================================
+   Error State
+   ============================================ */
+.error-message {
+    font-family: var(--font-sans);
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+.error-message code {
+    display: block;
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+}
+
+/* ============================================
+   Offline Notice
+   ============================================ */
+.offline-notice {
+    position: fixed;
+    top: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    font-family: var(--font-sans);
+    font-size: 0.7rem;
+    color: var(--text-subtle);
+    background: var(--bg-color);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}

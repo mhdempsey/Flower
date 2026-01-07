@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Tab - Florilege</title>
+
+    <!-- Google Fonts: Newsreader (serif) for content, Inter (sans-serif) for UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Newsreader:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Setup prompt (shown if not configured) -->
+    <div class="setup-prompt" id="setup">
+        <div class="setup-content">
+            <h1>Welcome to Florilege</h1>
+            <p>Your personal oracle awaits. First, connect your Notion database.</p>
+            <button id="setup-btn" class="setup-button">Open Settings</button>
+        </div>
+    </div>
+
+    <!-- Main content container - centered in viewport -->
+    <main class="oracle-container" id="oracle">
+        <!-- Loading state -->
+        <div class="loading" id="loading">
+            <span>...</span>
+        </div>
+
+        <!-- Content will be injected here -->
+        <article class="oracle-content" id="content" aria-live="polite">
+            <!-- Dynamic content rendered by JavaScript -->
+        </article>
+    </main>
+
+    <!-- Subtle branding in corner -->
+    <footer class="branding">
+        <span>Florilege</span>
+    </footer>
+
+    <!-- Hint for interaction -->
+    <div class="hint" id="hint">
+        <span>press space for another</span>
+    </div>
+
+    <!-- Settings link -->
+    <a href="options.html" class="settings-link" id="settings-link" title="Settings">⚙</a>
+
+    <script src="script.js"></script>
+</body>
+</html>

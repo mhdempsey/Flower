@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florilege Settings</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Newsreader:wght@400&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg-color: #faf9f7;
+            --text-color: #1a1a1a;
+            --text-muted: #666666;
+            --text-subtle: #999999;
+            --border-color: #e5e5e5;
+            --success-color: #22863a;
+            --error-color: #cb2431;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            --font-serif: 'Newsreader', Georgia, serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-sans);
+            background: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 3rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-family: var(--font-serif);
+            font-size: 2rem;
+            font-weight: 400;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-family: var(--font-sans);
+            font-size: 0.9rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            background: white;
+            transition: border-color 0.2s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--text-color);
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: var(--text-subtle);
+            margin-top: 0.5rem;
+        }
+
+        .help-text a {
+            color: var(--text-muted);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            font-family: var(--font-sans);
+            font-size: 0.875rem;
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-primary {
+            background: var(--text-color);
+            color: var(--bg-color);
+        }
+
+        .btn-primary:hover {
+            background: #333;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-muted);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--text-muted);
+        }
+
+        .status {
+            margin-top: 1.5rem;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .status.success {
+            display: block;
+            background: #f0fff4;
+            color: var(--success-color);
+            border: 1px solid #c6f6d5;
+        }
+
+        .status.error {
+            display: block;
+            background: #fef2f2;
+            color: var(--error-color);
+            border: 1px solid #fecaca;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border-color);
+            margin: 2.5rem 0;
+        }
+
+        h2 {
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .cache-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+        }
+
+        .cache-info strong {
+            color: var(--text-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Florilege</h1>
+        <p class="subtitle">Connect your Notion database to start your personal oracle</p>
+
+        <form id="settings-form">
+            <div class="form-group">
+                <label for="api-key">Notion API Key</label>
+                <input type="password" id="api-key" name="apiKey" placeholder="secret_..." autocomplete="off">
+                <p class="help-text">
+                    Get your API key from <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a>
+                </p>
+            </div>
+
+            <div class="form-group">
+                <label for="database-id">Database ID</label>
+                <input type="text" id="database-id" name="databaseId" placeholder="abc123...">
+                <p class="help-text">
+                    The 32-character ID from your database URL:<br>
+                    notion.so/<strong>[database-id]</strong>?v=...
+                </p>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" class="btn-primary">Save Settings</button>
+                <button type="button" id="test-btn" class="btn-secondary">Test Connection</button>
+            </div>
+
+            <div class="status" id="status"></div>
+        </form>
+
+        <hr class="divider">
+
+        <h2>Cache</h2>
+        <p class="cache-info" id="cache-info">Loading cache info...</p>
+        <button type="button" id="clear-cache-btn" class="btn-secondary">Clear Cache & Refresh</button>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>
