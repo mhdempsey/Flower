@@ -25,9 +25,12 @@
     font-family: 'Antiqua', Georgia, serif;
 }
 
-/* Apply VTKS Dear Love to post titles */
+/* Apply EB Garamond to post titles - large header style */
 .content-label {
-    font-family: 'VTKS Dear Love', cursive;
+    font-family: 'EB Garamond', Georgia, serif;
+    font-size: 2.5rem;
+    letter-spacing: 0.15em;
+    font-weight: 500;
 }
 
 /* Optional: Use Antiqua for all content text */
@@ -43,3 +46,35 @@
     font-family: 'Antiqua', Georgia, serif;
 }
 */
+
+/* Apply VTKS Dear Love to Florilege branding with glitch effect */
+.branding {
+    font-family: 'VTKS Dear Love', cursive;
+    letter-spacing: 0.2em;
+    animation: glitch 3s infinite;
+    position: relative;
+}
+
+/* Glitch animation */
+@keyframes glitch {
+    0%, 90%, 100% {
+        transform: translate(0);
+        text-shadow: none;
+    }
+    92% {
+        transform: translate(-2px, 1px);
+        text-shadow: 2px 0 #ff00ff, -2px 0 #00ffff;
+    }
+    94% {
+        transform: translate(2px, -1px);
+        text-shadow: -2px 0 #ff00ff, 2px 0 #00ffff;
+    }
+    96% {
+        transform: translate(-1px, 2px);
+        text-shadow: 1px 0 #ff00ff, -1px 0 #00ffff;
+    }
+    98% {
+        transform: translate(1px, -2px);
+        text-shadow: -1px 0 #ff00ff, 1px 0 #00ffff;
+    }
+}
