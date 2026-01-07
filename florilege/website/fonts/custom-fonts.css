@@ -10,9 +10,24 @@
     font-display: swap;
 }
 
+/* VTKS Dear Love font */
+@font-face {
+    font-family: 'VTKS Dear Love';
+    src: url('/fonts/VTKSDearLove.woff2') format('woff2'),
+         url('/fonts/VTKSDearLove.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Apply Antiqua font to learn more links */
 .content-learn-more a {
     font-family: 'Antiqua', Georgia, serif;
+}
+
+/* Apply VTKS Dear Love to post titles */
+.content-label {
+    font-family: 'VTKS Dear Love', cursive;
 }
 
 /* Optional: Use Antiqua for all content text */
