@@ -1,0 +1,16 @@
+{
+  "name": "florilege",
+  "version": "1.0.0",
+  "description": "Personal oracle content surfacing system",
+  "main": "api/content.js",
+  "scripts": {
+    "dev": "vercel dev",
+    "deploy": "vercel --prod"
+  },
+  "keywords": ["oracle", "notion", "content", "curation"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@notionhq/client": "^2.2.15"
+  }
+}

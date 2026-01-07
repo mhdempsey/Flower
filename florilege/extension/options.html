@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Florilege Settings</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #faf9f7;
+            color: #1a1a1a;
+            padding: 3rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 2.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-family: 'Inter', sans-serif;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: #fff;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .help-text {
+            font-size: 0.75rem;
+            color: #999;
+            margin-top: 0.375rem;
+            line-height: 1.4;
+        }
+
+        .help-text a {
+            color: #666;
+            text-decoration: underline;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        button {
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            font-family: 'Inter', sans-serif;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background-color: #1a1a1a;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+        }
+
+        .btn-secondary {
+            background-color: #e0e0e0;
+            color: #1a1a1a;
+        }
+
+        .btn-secondary:hover {
+            background-color: #d0d0d0;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .status-message.success {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            border: 1px solid #c8e6c9;
+        }
+
+        .status-message.error {
+            background-color: #ffebee;
+            color: #c62828;
+            border: 1px solid #ffcdd2;
+        }
+
+        .divider {
+            height: 1px;
+            background-color: #e0e0e0;
+            margin: 2.5rem 0;
+        }
+
+        .instructions {
+            background-color: #f5f5f5;
+            padding: 1.5rem;
+            border-radius: 4px;
+            margin-top: 2.5rem;
+        }
+
+        .instructions h2 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .instructions ol {
+            margin-left: 1.25rem;
+            line-height: 1.8;
+        }
+
+        .instructions li {
+            font-size: 0.875rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .instructions code {
+            background-color: #e0e0e0;
+            padding: 0.125rem 0.375rem;
+            border-radius: 2px;
+            font-size: 0.8125rem;
+            font-family: 'Monaco', 'Courier New', monospace;
+        }
+    </style>
+</head>
+<body>
+    <h1>Florilege Settings</h1>
+    <p class="subtitle">Configure your Notion database connection</p>
+
+    <form id="settings-form">
+        <div class="form-group">
+            <label for="notionApiKey">Notion Integration Token</label>
+            <input type="password" id="notionApiKey" placeholder="secret_...">
+            <div class="help-text">
+                Your Notion integration's internal token.
+                <a href="https://www.notion.so/my-integrations" target="_blank">Create an integration</a>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label for="notionDatabaseId">Notion Database ID</label>
+            <input type="text" id="notionDatabaseId" placeholder="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+            <div class="help-text">
+                The 32-character ID from your database URL. Found after the workspace name and before the question mark.
+            </div>
+        </div>
+
+        <div class="button-group">
+            <button type="submit" class="btn-primary">Save Settings</button>
+            <button type="button" id="clearCache" class="btn-secondary">Clear Cache</button>
+        </div>
+
+        <div id="statusMessage" class="status-message"></div>
+    </form>
+
+    <div class="divider"></div>
+
+    <div class="instructions">
+        <h2>Quick Setup Guide</h2>
+        <ol>
+            <li>Go to <a href="https://www.notion.so/my-integrations" target="_blank">notion.so/my-integrations</a></li>
+            <li>Click "New integration" and give it a name (e.g., "Florilege")</li>
+            <li>Copy the "Internal Integration Token" and paste it above</li>
+            <li>Open your Notion database and click "..." → "Add connections" → Select your integration</li>
+            <li>Copy the database ID from the URL (32 characters) and paste it above</li>
+            <li>Click "Save Settings" and refresh your new tab</li>
+        </ol>
+    </div>
+
+    <script src="options.js"></script>
+</body>
+</html>
